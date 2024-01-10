@@ -1,0 +1,56 @@
+## Bing
+Here is a sample program in C++ that implements a circular queue of capacity (n-1) elements using an array of b elements, where the insertion and deletion operations are carried out using REAR and FRONT as array index variables respectively. Initially, REAR = FRONT = 0.
+
+#include <iostream>
+using namespace std;
+
+const int n = 10; // capacity of the queue
+int queue[n], REAR = 0, FRONT = 0;
+
+void enqueue(int x) {
+    if ((REAR + 1) % n == FRONT) {
+        cout << "Queue is full." << endl;
+    } else {
+        queue[REAR] = x;
+        REAR = (REAR + 1) % n;
+    }
+}
+
+void dequeue() {
+    if (REAR == FRONT) {
+        cout << "Queue is empty." << endl;
+    } else {
+        cout << "Deleted element: " << queue[FRONT] << endl;
+        FRONT = (FRONT + 1) % n;
+    }
+}
+
+int main() {
+    int choice, x;
+    while (true) {
+        cout << "Enter 1 to insert element into queue." << endl;
+        cout << "Enter 2 to delete element from queue." << endl;
+        cout << "Enter 3 to exit." << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                cout << "Enter element to be inserted: ";
+                cin >> x;
+                enqueue(x);
+                break;
+            case 2:
+                dequeue();
+                break;
+            case 3:
+                exit(0);
+            default:
+                cout << "Invalid choice. Try again." << endl;
+        }
+    }
+    return 0;
+}
+
+The above program demonstrates the implementation of a circular queue of capacity (n-1) elements using an array of b elements. The enqueue() function is used to insert elements into the queue, while the dequeue() function is used to delete elements from the queue. The program also includes checks for queue full and queue empty conditions.
+Please note that the program assumes that the user will input valid integers when prompted. If the user inputs invalid data, the program may behave unexpectedly.
+I hope this helps! Let me know if you have any other questions.

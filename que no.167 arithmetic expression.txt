@@ -1,0 +1,99 @@
+167. evaluating the arithmetic expression 2*3-(4+5), using stacks to evaluate postfix form
+**pseudocode**
+1. Initialize an empty stack
+2. Split the postfix expression into elements
+3. For each element in the postfix expression:
+   a. If the element is an operand:
+      i.  Convert the operand to an integer and push it onto the stack
+   b. If the element is an operator:
+      i.  Pop operand2 from the stack
+      ii. Pop operand1 from the stack
+      iii. Perform the operation with operand1 and operand2
+      iv. Push the result back onto the stack
+4. The final result is on the top of the stack
+5. Pop the result from the stack
+6. Output the result
+
+
+**Program**
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_SIZE 100
+
+// Stack structure
+typedef struct {
+    int items[MAX_SIZE];
+    int top;
+} Stack;
+
+// Function prototypes
+void push(Stack *s, int value);
+int pop(Stack *s);
+int evaluatePostfix(char *postfix);
+
+int main() {
+    // Postfix expression: 2 3 * 4 5 + -
+    char postfix[] = "2 3 * 4 5 + -";
+
+    int result = evaluatePostfix(postfix);
+
+    printf("Result: %d\n", result);
+
+    return 0;
+}
+
+void push(Stack *s, int value) {
+    if (s->top == MAX_SIZE - 1) {
+        printf("Stack overflow\n");
+        exit(EXIT_FAILURE);
+    } else {
+        s->top++;
+        s->items[s->top] = value;
+    }
+}
+
+int pop(Stack *s) {
+    if (s->top == -1) {
+        printf("Stack underflow\n");
+        exit(EXIT_FAILURE);
+    } else {
+        return s->items[s->top--];
+    }
+}
+
+int evaluatePostfix(char *postfix) {
+    Stack s;
+    s.top = -1;
+
+    for (int i = 0; postfix[i] != '\0'; i++) {
+        if (isdigit(postfix[i])) {
+            // Operand, push onto the stack
+            push(&s, postfix[i] - '0');
+        } else if (postfix[i] == ' ') {
+            // Skip whitespace
+            continue;
+        } else {
+            // Operator, perform the operation
+            int operand2 = pop(&s);
+            int operand1 = pop(&s);
+
+            switch (postfix[i]) {
+                case '+':
+                    push(&s, operand1 + operand2);
+                    break;
+                case '-':
+                    push(&s, operand1 - operand2);
+                    break;
+                case '*':
+                    push(&s, operand1 * operand2);
+                    break;
+                // Add more cases for other operators if needed
+            }
+        }
+    }
+
+    // The final result is on the top of the stack
+    return pop(&s);
+}

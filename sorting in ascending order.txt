@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct customer {
+    int customer_id;
+    char purchase_date[11];
+    float purchase_amount;
+};
+
+int compare_dates(const void *a, const void *b) {
+    return strcmp(((struct customer *)a)->purchase_date, ((struct customer *)b)->purchase_date);
+}
+
+int main() {
+    int n, i;
+    printf("Enter the number of customers: ");
+    scanf("%d", &n);
+
+    struct customer *customers = malloc(n * sizeof(struct customer));
+    if (customers == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (i = 0; i < n; i++) {
+        printf("Enter details of customer %d:\n", i + 1);
+        printf("Customer ID: ");
+        scanf("%d", &customers[i].customer_id);
+        printf("Purchase Date (YYYY-MM-DD): ");
+        scanf("%s", customers[i].purchase_date);
+        printf("Purchase Amount: ");
+        scanf("%f", &customers[i].purchase_amount);
+    }
+
+    qsort(customers, n, sizeof(struct customer), compare_dates);
+
+    printf("\nCustomer data sorted by purchase date in ascending order:\n");
+    printf("Customer ID\tPurchase Date\tPurchase Amount\n");
+    
+    for (i = 0; i < n; i++) {
+        printf("%d\t\t%s\t%.2f\n", customers[i].customer_id, customers[i].purchase_date, customers[i].purchase_amount);
+    }
+
+    free(customers);
+    return 0;
+}

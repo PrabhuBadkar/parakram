@@ -1,0 +1,120 @@
+9.multiple stacks may be implemented using one array. where b1,b2,...bn denote bottom of respective stacks and arrow indicate direction of growth. Out of the above two alternatives which one would you prefer and why? Which alternative will need more time to declare stack full? It may be noted that stack is declared full when all the stacks are full.
+
+**PseudoCode**
+Data Structures:
+- array: A single array to hold elements for multiple stacks.
+- bottom_pointers: An array to keep track of the bottom of each stack.
+
+Functions:
+1. initializeMultipleStacks(total_size, stack_count):
+   - Allocate memory for the array and bottom_pointers.
+   - Set stack_size as total_size / stack_count.
+   - Initialize bottom_pointers for each stack.
+
+2. isFull(stack_number):
+   - Check if the stack with stack_number is full.
+   - Return true if the bottom pointer is at the upper limit for that stack.
+
+3. push(stack_number, value):
+   - Check if the stack is full using isFull function.
+   - If not full, calculate the index in the array based on the bottom pointer.
+   - Store the value at the calculated index.
+   - Increment the bottom pointer.
+
+4. pop(stack_number):
+   - Check if the stack is not empty (bottom pointer > lower limit).
+   - If not empty, decrement the bottom pointer.
+   - Return the element at the updated bottom pointer.
+
+5. freeMultipleStacks():
+   - Free the allocated memory for the array and bottom_pointers.
+
+Main Algorithm:
+1. Initialize the multiple stacks using initializeMultipleStacks(total_size, stack_count).
+
+2. Perform push and pop operations as needed on different stacks using push(stack_number, value) and pop(stack_number).
+
+3. Free the allocated memory using freeMultipleStacks() when done.
+
+
+**program**
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_STACKS 3 // Adjust the number of stacks as needed
+
+typedef struct {
+    int total_size;
+    int stack_size;
+    int *array;
+    int *bottom_pointers;
+} MultipleStacks;
+
+MultipleStacks* initializeMultipleStacks(int total_size, int stack_count) {
+    MultipleStacks *stacks = (MultipleStacks*)malloc(sizeof(MultipleStacks));
+    stacks->total_size = total_size;
+    stacks->stack_size = total_size / stack_count;
+    stacks->array = (int*)malloc(sizeof(int) * total_size);
+    stacks->bottom_pointers = (int*)malloc(sizeof(int) * stack_count);
+
+    for (int i = 0; i < stack_count; i++) {
+        stacks->bottom_pointers[i] = i * stacks->stack_size;
+    }
+
+    return stacks;
+}
+
+int isFull(MultipleStacks *stacks, int stack_number) {
+    return stacks->bottom_pointers[stack_number] == (stack_number + 1) * stacks->stack_size;
+}
+
+void push(MultipleStacks *stacks, int stack_number, int value) {
+    if (!isFull(stacks, stack_number)) {
+        int index = stacks->bottom_pointers[stack_number];
+        stacks->array[index] = value;
+        stacks->bottom_pointers[stack_number]++;
+    } else {
+        printf("Stack %d is full. Cannot push element %d.\n", stack_number, value);
+    }
+}
+
+int pop(MultipleStacks *stacks, int stack_number) {
+    if (stacks->bottom_pointers[stack_number] > stack_number * stacks->stack_size) {
+        stacks->bottom_pointers[stack_number]--;
+        return stacks->array[stacks->bottom_pointers[stack_number]];
+    } else {
+        printf("Stack %d is empty. Cannot pop.\n", stack_number);
+        return -1; // Assuming -1 represents an invalid value; adjust as needed
+    }
+}
+
+void freeMultipleStacks(MultipleStacks *stacks) {
+    free(stacks->array);
+    free(stacks->bottom_pointers);
+    free(stacks);
+}
+
+int main() {
+    MultipleStacks *stacks = initializeMultipleStacks(9, MAX_STACKS);
+
+    push(stacks, 0, 1);
+    push(stacks, 0, 2);
+    push(stacks, 1, 3);
+    push(stacks, 1, 4);
+    push(stacks, 2, 5);
+    push(stacks, 2, 6);
+
+    // Print the array after pushing elements
+    for (int i = 0; i < stacks->total_size; i++) {
+        printf("%d ", stacks->array[i]);
+    }
+    printf("\n");
+
+    printf("Popped from stack 0: %d\n", pop(stacks, 0));
+    printf("Popped from stack 1: %d\n", pop(stacks, 1));
+    printf("Popped from stack 2: %d\n", pop(stacks, 2));
+
+    freeMultipleStacks(stacks);
+
+    return 0;
+}
